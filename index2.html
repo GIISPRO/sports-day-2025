@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sports Day 2025 - Results Tabulation</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .tabs {
+            display: flex;
+            background: #f8f9fa;
+            border-bottom: 3px solid #e9ecef;
+        }
+        
+        .tab {
+            flex: 1;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            border-bottom: 4px solid transparent;
+        }
+        
+        .tab.active {
+            background: white;
+            border-bottom-color: #4ecdc4;
+            color: #4ecdc4;
+        }
+        
+        .tab:hover:not(.active) {
+            background: #e9ecef;
+        }
+        
+        .content {
+            padding: 30px;
+        }
+        
+        .section {
+            display: none;
+        }
+        
+        .section.active {
+            display: block;
+        }
+        
+        .input-section {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            border-left: 5px solid #4ecdc4;
+        }
+        
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        label {
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #333;
+        }
+        
+        select, input {
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        select:focus, input:focus {
+            outline: none;
+            border-color: #4ecdc4;
+        }
+        
+        .btn {
+            background: linear-gradient(45deg, #4ecdc4, #44a08d);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .btn-save {
+            background: linear-gradient(45deg, #28a745, #20c997);
+            margin-left: 10px;
+        }
+        
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin-top: 30px;
+        }
+        
+        .results-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            border-left: 5px solid #ff6b6b;
+        }
+        
+        .results-card h3 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 1.3em;
+        }
+        
+        .leaderboard {
+            list-style: none;
+        }
+        
+        .leaderboard li {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            margin-bottom: 10px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #ddd;
+        }
+        
+        .leaderboard li.gold {
+            border-left-color: #ffd700;
+            background: linear-gradient(90deg, #fff9c4, #f8f9fa);
+        }
+        
+        .leaderboard li.silver {
+            border-left-color: #c0c0c0;
+            background: linear-gradient(90deg, #f5f5f5, #f8f9fa);
+        }
+        
+        .leaderboard li.bronze {
+            border-left-color: #cd7f32;
+            background: linear-gradient(90deg, #f4e4bc, #f8f9fa);
+        }
+        
+        .student-info {
+            flex: 1;
+        }
+        
+        .student-name {
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .student-details {
+            font-size: 0.9em;
+            color: #666;
+        }
+        
+        .points {
+            font-weight: bold;
+            font-size: 1.1em;
+            color: #4ecdc4;
+        }
+        
+        .house-colors {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            margin-right: 10px;
+            vertical-align: middle;
+        }
+        
+        .chrysanthemum { background-color: #ffd700; }
+        .hibiscus { background-color: #ff69b4; }
+        .orchid { background-color: #9370db; }
+        .sunflower { background-color: #ffa500; }
+        
+        .event-log {
+            max-height: 400px;
+            overflow-y: auto;
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+        }
+        
+        .event-entry {
+            background: white;
+            margin-bottom: 15px;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #4ecdc4;
+        }
+        
+        .export-section {
+            margin-top: 30px;
+            text-align: center;
+        }
+        
+        .alert {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏆 Sports Day 2025</h1>
+            <p>Results Tabulation System</p>
+        </div>
+        
+        <div class="tabs">
+            <div class="tab active" onclick="showTab('input')">📝 Input Results</div>
+            <div class="tab" onclick="showTab('athletes')">🥇 Best Athletes</div>
+            <div class="tab" onclick="showTab('houses')">🏠 House Champions</div>
+            <div class="tab" onclick="showTab('events')">📊 Event Log</div>
+        </div>
+        
+        <div class="content">
+            <!-- Input Section -->
+            <div id="input" class="section active">
+                <div class="input-section">
+                    <h2>🎯 Add Event Results</h2>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="eventType">Event Type</label>
+                            <select id="eventType">
+                                <option value="">Select Event</option>
+                                <option value="school_jam">School Jam (200 pts)</option>
+                                <option value="tug_of_war">Tug of War (200 pts)</option>
+                                <option value="100m">100m Race</option>
+                                <option value="4x100m">4x100m Relay</option>
+                                <option value="hyrox">HYROX</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="category">Category</label>
+                            <select id="category">
+                                <option value="">Select Category</option>
+                                <option value="u12_boys">Under 12 Boys</option>
+                                <option value="u12_girls">Under 12 Girls</option>
+                                <option value="u14_boys">Under 14 Boys</option>
+                                <option value="u14_girls">Under 14 Girls</option>
+                                <option value="u16_boys">Under 16 Boys</option>
+                                <option value="u16_girls">Under 16 Girls</option>
+                                <option value="house_event">House Event</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="goldStudent">🥇 Gold Winner</label>
+                            <input type="text" id="goldStudent" placeholder="Student Name">
+                        </div>
+                        <div class="form-group">
+                            <label for="goldHouse">House</label>
+                            <select id="goldHouse">
+                                <option value="">Select House</option>
+                                <option value="Chrysanthemum">Chrysanthemum</option>
+                                <option value="Hibiscus">Hibiscus</option>
+                                <option value="Orchid">Orchid</option>
+                                <option value="Sunflower">Sunflower</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="silverStudent">🥈 Silver Winner</label>
+                            <input type="text" id="silverStudent" placeholder="Student Name">
+                        </div>
+                        <div class="form-group">
+                            <label for="silverHouse">House</label>
+                            <select id="silverHouse">
+                                <option value="">Select House</option>
+                                <option value="Chrysanthemum">Chrysanthemum</option>
+                                <option value="Hibiscus">Hibiscus</option>
+                                <option value="Orchid">Orchid</option>
+                                <option value="Sunflower">Sunflower</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="bronzeStudent">🥉 Bronze Winner</label>
+                            <input type="text" id="bronzeStudent" placeholder="Student Name">
+                        </div>
+                        <div class="form-group">
+                            <label for="bronzeHouse">House</label>
+                            <select id="bronzeHouse">
+                                <option value="">Select House</option>
+                                <option value="Chrysanthemum">Chrysanthemum</option>
+                                <option value="Hibiscus">Hibiscus</option>
+                                <option value="Orchid">Orchid</option>
+                                <option value="Sunflower">Sunflower</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <button class="btn" onclick="addResult()">➕ Add Result</button>
+                    <button class="btn btn-save" onclick="saveData()">💾 Save to Cloud</button>
+                </div>
+                
+                <div id="inputAlert" class="alert" style="display: none;"></div>
+            </div>
+            
+            <!-- Best Athletes Section -->
+            <div id="athletes" class="section">
+                <h2>🏆 Best Athletes Leaderboard</h2>
+                <div class="results-grid">
+                    <div class="results-card">
+                        <h3>Under 12 Boys</h3>
+                        <ul id="u12-boys-list" class="leaderboard"></ul>
+                    </div>
+                    <div class="results-card">
+                        <h3>Under 12 Girls</h3>
+                        <ul id="u12-girls-list" class="leaderboard"></ul>
+                    </div>
+                    <div class="results-card">
+                        <h3>Under 14 Boys</h3>
+                        <ul id="u14-boys-list" class="leaderboard"></ul>
+                    </div>
+                    <div class="results-card">
+                        <h3>Under 14 Girls</h3>
+                        <ul id="u14-girls-list" class="leaderboard"></ul>
+                    </div>
+                    <div class="results-card">
+                        <h3>Under 16 Boys</h3>
+                        <ul id="u16-boys-list" class="leaderboard"></ul>
+                    </div>
+                    <div class="results-card">
+                        <h3>Under 16 Girls</h3>
+                        <ul id="u16-girls-list" class="leaderboard"></ul>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- House Champions Section -->
+            <div id="houses" class="section">
+                <h2>🏠 Overall House Championship</h2>
+                <div class="results-card">
+                    <h3>House Standings</h3>
+                    <ul id="house-standings" class="leaderboard"></ul>
+                </div>
+            </div>
+            
+            <!-- Event Log Section -->
+            <div id="events" class="section">
+                <h2>📋 Event Results Log</h2>
+                <div class="event-log" id="eventLog">
+                    <p style="text-align: center; color: #666;">No events recorded yet. Start adding results!</p>
+                </div>
+                
+                <div class="export-section">
+                    <button class="btn" onclick="exportResults()">📊 Export to Excel</button>
+                    <button class="btn btn-save" onclick="saveData()">💾 Save to Cloud</button>
+                    <button class="btn" onclick="clearAllData()" style="background: linear-gradient(45deg, #ff6b6b, #ee5a52); margin-left: 10px;">🗑️ Clear All Data</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Apps Script URL for saving data
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzmuzYnG2wQWVUxV2GZ2_ykUJ8D6lfGvw85BgDCkF-4/dev';
+        
+        // Data storage
+        let students = {};  // studentName: { house, category, gold, silver, bronze, totalPoints }
+        let houses = {
+            'Chrysanthemum': 0,
+            'Hibiscus': 0,
+            'Orchid': 0,
+            'Sunflower': 0
+        };
+        let eventLog = [];
+        
+        // Points system
+        const POINTS = {
+            GOLD: 100,
+            SILVER: 70,
+            BRONZE: 40,
+            SCHOOL_JAM: 200,
+            TUG_OF_WAR: 200
+        };
+        
+        // Save data function
+        async function saveData() {
+            const payload = {students, houses, eventLog};
+            
+            try {
+                showAlert('Saving data to cloud...', 'info');
+                
+                await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(payload)
+                });
+                
+                showAlert('Data saved successfully to cloud!', 'success');
+            } catch (error) {
+                console.error('Save error:', error);
+                showAlert('Failed to save data to cloud. Please try again.', 'error');
+            }
+        }
+        
+        function showTab(tabName) {
+            // Hide all sections
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            // Remove active class from all tabs
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Show selected section and tab
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+            
+            // Update displays when switching tabs
+            if (tabName === 'athletes') updateAthleteLeaderboards();
+            if (tabName === 'houses') updateHouseStandings();
+            if (tabName === 'events') updateEventLog();
+        }
+        
+        function addResult() {
+            const eventType = document.getElementById('eventType').value;
+            const category = document.getElementById('category').value;
+            const goldStudent = document.getElementById('goldStudent').value;
+            const goldHouse = document.getElementById('goldHouse').value;
+            const silverStudent = document.getElementById('silverStudent').value;
+            const silverHouse = document.getElementById('silverHouse').value;
+            const bronzeStudent = document.getElementById('bronzeStudent').value;
+            const bronzeHouse = document.getElementById('bronzeHouse').value;
+            
+            // Validation
+            if (!eventType || !goldStudent || !goldHouse) {
+                showAlert('Please fill in at least the event type, gold winner, and their house.', 'error');
+                return;
+            }
+            
+            // Handle special events (School Jam, Tug of War)
+            if (eventType === 'school_jam' || eventType === 'tug_of_war') {
+                const points = eventType === 'school_jam' ? POINTS.SCHOOL_JAM : POINTS.TUG_OF_WAR;
+                houses[goldHouse] += points;
+                
+                eventLog.push({
+                    timestamp: new Date().toLocaleString(),
+                    event: eventType === 'school_jam' ? 'School Jam' : 'Tug of War',
+                    category: 'House Event',
+                    winner: goldStudent,
+                    house: goldHouse,
+                    points: points
+                });
+                
+                showAlert(`Added ${eventType === 'school_jam' ? 'School Jam' : 'Tug of War'} result! ${goldHouse} gains ${points} points.`, 'success');
+            } else {
+                // Regular podium events
+                if (!category) {
+                    showAlert('Please select a category for podium events.', 'error');
+                    return;
+                }
+                
+                // Add gold winner
+                if (goldStudent && goldHouse) {
+                    addStudentResult(goldStudent, goldHouse, category, 'gold');
+                    houses[goldHouse] += POINTS.GOLD;
+                }
+                
+                // Add silver winner
+                if (silverStudent && silverHouse) {
+                    addStudentResult(silverStudent, silverHouse, category, 'silver');
+                    houses[silverHouse] += POINTS.SILVER;
+                }
+                
+                // Add bronze winner
+                if (bronzeStudent && bronzeHouse) {
+                    addStudentResult(bronzeStudent, bronzeHouse, category, 'bronze');
+                    houses[bronzeHouse] += POINTS.BRONZE;
+                }
+                
+                eventLog.push({
+                    timestamp: new Date().toLocaleString(),
+                    event: eventType,
+                    category: category,
+                    gold: goldStudent ? `${goldStudent} (${goldHouse})` : '',
+                    silver: silverStudent ? `${silverStudent} (${silverHouse})` : '',
+                    bronze: bronzeStudent ? `${bronzeStudent} (${bronzeHouse})` : ''
+                });
+                
+                showAlert('Event results added successfully!', 'success');
+            }
+            
+            // Clear form
+            clearForm();
+            
+            // Update displays
+            updateAthleteLeaderboards();
+            updateHouseStandings();
+        }
+        
+        function addStudentResult(studentName, house, category, medal) {
+            if (!students[studentName]) {
+                students[studentName] = {
+                    house: house,
+                    category: category,
+                    gold: 0,
+                    silver: 0,
+                    bronze: 0,
+                    totalPoints: 0
+                };
+            }
+            
+            students[studentName][medal]++;
+            
+            // Calculate total points
+            students[studentName].totalPoints = 
+                (students[studentName].gold * POINTS.GOLD) +
+                (students[studentName].silver * POINTS.SILVER) +
+                (students[studentName].bronze * POINTS.BRONZE);
+        }
+        
+        function updateAthleteLeaderboards() {
+            const categories = ['u12_boys', 'u12_girls', 'u14_boys', 'u14_girls', 'u16_boys', 'u16_girls'];
+            
+            categories.forEach(cat => {
+                const listElement = document.getElementById(`${cat.replace('_', '-')}-list`);
+                const categoryStudents = Object.entries(students)
+                    .filter(([name, data]) => data.category === cat)
+                    .sort(([,a], [,b]) => b.totalPoints - a.totalPoints);
+                
+                listElement.innerHTML = '';
+                
+                if (categoryStudents.length === 0) {
+                    listElement.innerHTML = '<li style="text-align: center; color: #666;">No results yet</li>';
+                    return;
+                }
+                
+                categoryStudents.forEach(([name, data], index) => {
+                    const li = document.createElement('li');
+                    if (index === 0) li.classList.add('gold');
+                    else if (index === 1) li.classList.add('silver');
+                    else if (index === 2) li.classList.add('bronze');
+                    
+                    li.innerHTML = `
+                        <div class="student-info">
+                            <div class="student-name">
+                                <span class="house-colors ${data.house.toLowerCase()}"></span>
+                                ${name}
+                            </div>
+                            <div class="student-details">
+                                ${data.house} • 🥇${data.gold} 🥈${data.silver} 🥉${data.bronze}
+                            </div>
+                        </div>
+                        <div class="points">${data.totalPoints} pts</div>
+                    `;
+                    
+                    listElement.appendChild(li);
+                });
+            });
+        }
+        
+        function updateHouseStandings() {
+            const standings = Object.entries(houses)
+                .sort(([,a], [,b]) => b - a);
+            
+            const listElement = document.getElementById('house-standings');
+            listElement.innerHTML = '';
+            
+            standings.forEach(([house, points], index) => {
+                const li = document.createElement('li');
+                if (index === 0) li.classList.add('gold');
+                else if (index === 1) li.classList.add('silver');
+                else if (index === 2) li.classList.add('bronze');
+                
+                li.innerHTML = `
+                    <div class="student-info">
+                        <div class="student-name">
+                            <span class="house-colors ${house.toLowerCase()}"></span>
+                            ${house}
+                        </div>
+                        <div class="student-details">
+                            Position ${index + 1}
+                        </div>
+                    </div>
+                    <div class="points">${points} pts</div>
+                `;
+                
+                listElement.appendChild(li);
+            });
+        }
+        
+        function updateEventLog() {
+            const logElement = document.getElementById('eventLog');
+            
+            if (eventLog.length === 0) {
+                logElement.innerHTML = '<p style="text-align: center; color: #666;">No events recorded yet. Start adding results!</p>';
+                return;
+            }
+            
+            logElement.innerHTML = '';
+            
+            eventLog.slice().reverse().forEach(event => {
+                const div = document.createElement('div');
+                div.className = 'event-entry';
+                
+                if (event.category === 'House Event') {
+                    div.innerHTML = `
+                        <strong>${event.event}</strong> - ${event.timestamp}<br>
+                        Winner: ${event.winner} (${event.house}) - ${event.points} points
+                    `;
+                } else {
+                    div.innerHTML = `
+                        <strong>${event.event}</strong> (${event.category}) - ${event.timestamp}<br>
+                        🥇 ${event.gold}<br>
+                        🥈 ${event.silver}<br>
+                        🥉 ${event.bronze}
+                    `;
+                }
+                
+                logElement.appendChild(div);
+            });
+        }
+        
+        function clearForm() {
+            document.getElementById('eventType').value = '';
+            document.getElementById('category').value = '';
+            document.getElementById('goldStudent').value = '';
+            document.getElementById('goldHouse').value = '';
+            document.getElementById('silverStudent').value = '';
+            document.getElementById('silverHouse').value = '';
+            document.getElementById('bronzeStudent').value = '';
+            document.getElementById('bronzeHouse').value = '';
+        }
+        
+        function showAlert(message, type) {
+            const alertDiv = document.getElementById('inputAlert');
+            alertDiv.textContent = message;
+            alertDiv.style.display = 'block';
+            alertDiv.className = 'alert';
+            
+            if (type === 'error') {
+                alertDiv.style.background = '#f8d7da';
+                alertDiv.style.borderColor = '#f5c6cb';
+                alertDiv.style.color = '#721c24';
+            } else if (type === 'info') {
+                alertDiv.style.background = '#d1ecf1';
+                alertDiv.style.borderColor = '#bee5eb';
+                alertDiv.style.color = '#0c5460';
+            } else {
+                alertDiv.style.background = '#d4edda';
+                alertDiv.style.borderColor = '#c3e6cb';
+                alertDiv.style.color = '#155724';
+            }
+            
+            setTimeout(() => {
+                alertDiv.style.display = 'none';
+            }, 3000);
+        }
+        
+        function exportResults() {
+            // Create export data
+            const athleteData = [];
+            const houseData = [];
+            
+            // Best Athletes
+            const categories = ['u12_boys', 'u12_girls', 'u14_boys', 'u14_girls', 'u16_boys', 'u16_girls'];
+            categories.forEach(cat => {
+                const categoryStudents = Object.entries(students)
+                    .filter(([name, data]) => data.category === cat)
+                    .sort(([,a], [,b]) => b.totalPoints - a.totalPoints);
+                
+                const categoryName = cat.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase());
+                athleteData.push([categoryName, '', '', '', '', '']);
+                athleteData.push(['Rank', 'Name', 'House', 'Gold', 'Silver', 'Bronze', 'Total Points']);
+                
+                categoryStudents.forEach(([name, data], index) => {
+                    athleteData.push([
+                        index + 1,
+                        name,
+                        data.house,
+                        data.gold,
+                        data.silver,
+                        data.bronze,
+                        data.totalPoints
+                    ]);
+                });
+                athleteData.push(['', '', '', '', '', '']);
+            });
+            
+            // House Championship
+            const standings = Object.entries(houses).sort(([,a], [,b]) => b - a);
+            houseData.push(['House Championship Results']);
+            houseData.push(['Rank', 'House', 'Total Points']);
+            standings.forEach(([house, points], index) => {
+                houseData.push([index + 1, house, points]);
+            });
+            
+            // Create downloadable content
+            let csvContent = "BEST ATHLETES RESULTS\n\n";
+            athleteData.forEach(row => {
+                csvContent += row.join(',') + '\n';
+            });
+            
+            csvContent += "\n\nHOUSE CHAMPIONSHIP RESULTS\n\n";
+            houseData.forEach(row => {
+                csvContent += row.join(',') + '\n';
+            });
+            
+            // Download
+            const blob = new Blob([csvContent], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `Sports_Day_2025_Results_${new Date().toISOString().split('T')[0]}.csv`;
+            a.click();
+            window.URL.revokeObjectURL(url);
+            
+            showAlert('Results exported successfully!', 'success');
+        }
+        
+        function clearAllData() {
+            if (confirm('Are you sure you want to clear all data? This cannot be undone.')) {
+                students = {};
+                houses = {
+                    'Chrysanthemum': 0,
+                    'Hibiscus': 0,
+                    'Orchid': 0,
+                    'Sunflower': 0
+                };
+                eventLog = [];
+                
+                updateAthleteLeaderboards();
+                updateHouseStandings();
+                updateEventLog();
+                
+                showAlert('All data cleared successfully!', 'success');
+            }
+        }
+        
+        // Initialize displays
+        updateAthleteLeaderboards();
+        updateHouseStandings();
+        updateEventLog();
+    </script>
+</body>
+</html>
